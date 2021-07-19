@@ -13,15 +13,14 @@ const ALL_PERSONS = gql`
 `
 
 const App = () => {
-	const result = useQuery(ALL_PERSONS)
-	console.log(result)
+	const { loading, data } = useQuery(ALL_PERSONS)
 
-	return <div></div>
+	return (
+		<div>
+			{loading && <h3>Loading...</h3>}
+			{data && <Persons persons={data.allPersons} />}
+		</div>
+	)
 }
 
 export default App
-
-// if (result.loading) {
-// 	return <div>loading...</div>
-// }
-// {result && <Persons persons={result.data.allPersons} />}
