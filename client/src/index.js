@@ -17,8 +17,6 @@ const client = new ApolloClient({
 	}),
 })
 
-console.log(client)
-
 const query = gql`
 	query {
 		allPersons {
