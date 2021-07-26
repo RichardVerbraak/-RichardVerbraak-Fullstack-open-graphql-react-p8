@@ -1,24 +1,6 @@
 import React, { useState } from 'react'
-import { gql, useMutation } from '@apollo/client'
-
-const CREATE_PERSON = gql`
-	mutation createPerson(
-		$name: String!
-		$street: String!
-		$city: String!
-		$phone: String
-	) {
-		addPerson(name: $name, street: $street, city: $city, phone: $phone) {
-			name
-			phone
-			id
-			address {
-				street
-				city
-			}
-		}
-	}
-`
+import { useMutation } from '@apollo/client'
+import { ALL_PERSONS, CREATE_PERSON } from '../queries'
 
 const CreatePersonForm = () => {
 	const [name, setName] = useState('')
@@ -26,7 +8,10 @@ const CreatePersonForm = () => {
 	const [street, setStreet] = useState('')
 	const [city, setCity] = useState('')
 
-	const [createPerson] = useMutation(CREATE_PERSON)
+	// Con of re-fetching on mutation is the server not being updated when other users are altering the state
+	const [createPerson] = useMutation(CREATE_PERSON, {
+		refetchQueries: [{ query: ALL_PERSONS }],
+	})
 
 	const submitHandler = (e) => {
 		e.preventDefault()

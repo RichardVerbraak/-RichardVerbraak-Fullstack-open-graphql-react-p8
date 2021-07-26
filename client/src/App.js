@@ -13,6 +13,7 @@ const ALL_PERSONS = gql`
 	}
 `
 
+// Could add option to poll(re-fetch) every 2 seconds so the state would update after adding users, con is pointless web traffic
 const App = () => {
 	const { loading, data } = useQuery(ALL_PERSONS)
 
