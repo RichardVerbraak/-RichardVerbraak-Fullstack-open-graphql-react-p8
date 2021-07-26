@@ -10,7 +10,7 @@ const CREATE_PERSON = gql`
 	) {
 		addPerson(name: $name, street: $street, city: $city, phone: $phone) {
 			name
-			phon
+			phone
 			id
 			address {
 				street
@@ -20,7 +20,7 @@ const CREATE_PERSON = gql`
 	}
 `
 
-const createPersonForm = () => {
+const CreatePersonForm = () => {
 	const [name, setName] = useState('')
 	const [phone, setPhone] = useState('')
 	const [street, setStreet] = useState('')
@@ -32,9 +32,49 @@ const createPersonForm = () => {
 		e.preventDefault()
 
 		createPerson({ variables: { name, phone, street, city } })
+
+		setName('')
+		setPhone('')
+		setStreet('')
+		setCity('')
 	}
 
-	return <div></div>
+	return (
+		<div>
+			<h2>create new</h2>
+			<form onSubmit={submitHandler}>
+				<div>
+					name{' '}
+					<input
+						value={name}
+						onChange={({ target }) => setName(target.value)}
+					/>
+				</div>
+				<div>
+					phone{' '}
+					<input
+						value={phone}
+						onChange={({ target }) => setPhone(target.value)}
+					/>
+				</div>
+				<div>
+					street{' '}
+					<input
+						value={street}
+						onChange={({ target }) => setStreet(target.value)}
+					/>
+				</div>
+				<div>
+					city{' '}
+					<input
+						value={city}
+						onChange={({ target }) => setCity(target.value)}
+					/>
+				</div>
+				<button type='submit'>add!</button>
+			</form>
+		</div>
+	)
 }
 
-export default createPersonForm
+export default CreatePersonForm

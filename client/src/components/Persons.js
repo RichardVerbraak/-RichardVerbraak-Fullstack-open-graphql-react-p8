@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState } from 'react'
 import { gql, useLazyQuery } from '@apollo/client'
 
 const FIND_PERSON = gql`
