@@ -5,7 +5,6 @@ import { ALL_PERSONS } from './queries'
 import Persons from './components/Persons'
 import CreatePersonForm from './components/CreatePersonForm'
 import Message from './components/Message'
-import PhoneForm from './components/PhoneForm'
 
 // Could add option to poll(re-fetch) every 2 seconds so the state would update after adding users, con is pointless web traffic
 const App = () => {
@@ -26,7 +25,6 @@ const App = () => {
 			{loading && <h3>Loading...</h3>}
 			{data && <Persons persons={data.allPersons} />}
 			<CreatePersonForm setError={setError} />
-			<PhoneForm />
 		</div>
 	)
 }
