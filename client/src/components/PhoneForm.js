@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
 
 import { EDIT_NUMBER } from '../queries'
 
-const PhoneForm = () => {
+const PhoneForm = ({ setError }) => {
 	const [name, setName] = useState('')
 	const [phone, setPhone] = useState('')
 
-	const [changeNumber] = useMutation(EDIT_NUMBER)
+	// This will automatically update the list of persons because each person has an ID field and this will in turn mutate the person stored in cache
+	const [changeNumber, result] = useMutation(EDIT_NUMBER)
 
 	const submitHandler = (event) => {
 		event.preventDefault()
@@ -17,6 +18,13 @@ const PhoneForm = () => {
 		setName('')
 		setPhone('')
 	}
+
+	useEffect(() => {
+		if (result.data && result.data.editNumber === null) {
+			setError('Person not found')
+		}
+		// eslint-disable-next-line
+	}, [result.data])
 
 	return (
 		<div>
