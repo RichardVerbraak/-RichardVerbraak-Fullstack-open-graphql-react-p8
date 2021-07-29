@@ -1,5 +1,10 @@
 const { ApolloServer, UserInputError, gql } = require('apollo-server')
 const { v1: uuidv1 } = require('uuid')
+const connectDB = require('./config/db')
+
+require('dotenv').config()
+
+connectDB()
 
 let persons = [
 	{

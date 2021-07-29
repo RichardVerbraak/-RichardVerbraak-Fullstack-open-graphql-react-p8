@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 
+// Setting required to true is redundant because GraphQL already ensures the fields exist but it's good to also have validation in the DB
 const personSchema = new mongoose.Schema({
 	name: {
 		type: String,
