@@ -1,7 +1,7 @@
 const { UserInputError } = require('apollo-server')
 const { v1: uuidv1 } = require('uuid')
 
-const persons = require('../../personsData')
+const Person = require('../../models/personModel')
 
 // Resolvers is how GraphQL should respond to these queries (the logic behind the queries)
 // There have to be resolvers for each field in each type of schema
@@ -34,21 +34,22 @@ const persons = require('../../personsData')
 
 const resolvers = {
 	Query: {
-		personCount: () => persons.length,
+		personCount: () => Person.collection.countDocuments(),
 		allPersons: (root, args) => {
-			if (!args.phone) {
-				return persons
-			}
+			// if (!args.phone) {
+			// 	return persons
+			// }
 
-			// YES: only returns person object if it has a phone prop
-			// NO: returns person without phone prop
-			const personsWithPhone = (person) => {
-				return args.phone === 'YES' ? person.phone : !person.phone
-			}
+			// // YES: only returns person object if it has a phone prop
+			// // NO: returns person without phone prop
+			// const personsWithPhone = (person) => {
+			// 	return args.phone === 'YES' ? person.phone : !person.phone
+			// }
 
-			return persons.filter(personsWithPhone)
+			// return persons.filter(personsWithPhone)
+			return Person.find({})
 		},
-		findPerson: (root, args) => persons.find((p) => p.name === args.name),
+		findPerson: (root, args) => Person.findOne({ name: args.name }),
 	},
 	Person: {
 		address: (root) => {
@@ -60,38 +61,45 @@ const resolvers = {
 	},
 	Mutation: {
 		addPerson: (root, args) => {
-			const samePerson = persons.find((person) => {
-				return person.name === args.name
-			})
+			// const samePerson = persons.find((person) => {
+			// 	return person.name === args.name
+			// })
 
-			if (samePerson) {
-				throw new UserInputError('Name must be unique', {
-					invalidArgs: args.name,
-				})
-			}
+			// if (samePerson) {
+			// 	throw new UserInputError('Name must be unique', {
+			// 		invalidArgs: args.name,
+			// 	})
+			// }
 
-			const id = uuidv1()
-			const person = { ...args, id }
-			persons = persons.concat(person)
-			return person
+			// const id = uuidv1()
+			// const person = { ...args, id }
+			// persons = persons.concat(person)
+			// return person
+
+			const person = new Person({ ...args })
+			return person.save()
 		},
-		editNumber: (root, args) => {
-			const person = persons.find((person) => {
-				return person.name === args.name
-			})
+		editNumber: async (root, args) => {
+			// const person = persons.find((person) => {
+			// 	return person.name === args.name
+			// })
 
-			if (!person) {
-				return null
-			}
+			// if (!person) {
+			// 	return null
+			// }
 
-			const updatedPerson = { ...person, phone: args.phone }
+			// const updatedPerson = { ...person, phone: args.phone }
 
-			// Update the persons array on the server
-			persons.map((person) => {
-				return person.name === args.name ? updatedPerson : person
-			})
+			// // Update the persons array on the server
+			// persons.map((person) => {
+			// 	return person.name === args.name ? updatedPerson : person
+			// })
 
-			return updatedPerson
+			// return updatedPerson
+
+			const person = await Person.findOne({ name: args.name })
+			person.phone = args.phone
+			return person.save()
 		},
 	},
 }
