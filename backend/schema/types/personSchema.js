@@ -3,7 +3,7 @@ const { gql } = require('apollo-server')
 // Types
 // Mutation: This is a type used for operations that cause change
 // Enum: A type used to restrict the data returned by the set values, the values being YES & NO in this case (it's nullable so could be left out)
-const typeDefs = gql`
+const personTypeDefs = gql`
 	type Address {
 		street: String!
 		city: String!
@@ -38,4 +38,4 @@ const typeDefs = gql`
 	}
 `
 
-module.exports = typeDefs
+module.exports = personTypeDefs
