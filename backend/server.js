@@ -4,7 +4,8 @@ const { ApolloServer } = require('apollo-server')
 // GraphQL
 const personTypeDefs = require('./schema/types/personSchema')
 const userTypeDefs = require('./schema/types/userSchema')
-const resolvers = require('./schema/resolvers/resolvers')
+const personResolver = require('./schema/resolvers/personResolver')
+const userResolver = require('./schema/resolvers/userResolver')
 
 // MongoDB
 const connectDB = require('./config/db')
@@ -42,7 +43,7 @@ if (process.argv[2] === 'delete') {
 const apolloServer = async () => {
 	const server = new ApolloServer({
 		typeDefs: [personTypeDefs, userTypeDefs],
-		resolvers,
+		resolvers: [personResolver, userResolver],
 	})
 
 	const { url } = await server.listen()

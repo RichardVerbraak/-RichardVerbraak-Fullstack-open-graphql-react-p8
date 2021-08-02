@@ -31,7 +31,7 @@ const Person = require('../../models/personModel')
 
 // GraphQL will automatically parse the _id from MongoDB to just id, no need to manually set _id to id like other exercises
 // Apollo resolvers will now return a RESOLVED promise instead of just an object
-const resolvers = {
+const personResolver = {
 	Query: {
 		personCount: () => Person.collection.countDocuments(),
 		allPersons: (root, args) => {
@@ -105,4 +105,4 @@ const resolvers = {
 	},
 }
 
-module.exports = resolvers
+module.exports = personResolver
