@@ -38,6 +38,8 @@ if (process.argv[2] === 'delete') {
 	deleteData()
 }
 
+// Extending on these baseTypes so the person and user defs can be merged
+// source: https://stackoverflow.com/questions/60747549/how-to-split-type-definitions-and-resolvers-into-separate-files-in-apollo-server
 const baseTypeDefs = gql`
 	type Query
 	type Mutation
