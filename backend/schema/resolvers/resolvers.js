@@ -1,6 +1,3 @@
-const { UserInputError } = require('apollo-server')
-const { v1: uuidv1 } = require('uuid')
-
 const Person = require('../../models/personModel')
 
 // Resolvers is how GraphQL should respond to these queries (the logic behind the queries)
@@ -32,13 +29,18 @@ const Person = require('../../models/personModel')
 // 	}
 // }
 
+// GraphQL will automatically parse the _id from MongoDB to just id, no need to manually set _id to id like other exercises
+// Apollo resolvers will now return a RESOLVED promise instead of just an object
 const resolvers = {
 	Query: {
 		personCount: () => Person.collection.countDocuments(),
 		allPersons: (root, args) => {
-			// if (!args.phone) {
-			// 	return persons
-			// }
+			if (!args.phone) {
+				return Person.find({})
+			}
+
+			// $exists: true will return the documents which contain a phone field, set to false is opposite
+			return Person.find({ phone: { $exists: args.phone === 'YES' } })
 
 			// // YES: only returns person object if it has a phone prop
 			// // NO: returns person without phone prop
@@ -47,7 +49,6 @@ const resolvers = {
 			// }
 
 			// return persons.filter(personsWithPhone)
-			return Person.find({})
 		},
 		findPerson: (root, args) => Person.findOne({ name: args.name }),
 	},
