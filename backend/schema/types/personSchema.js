@@ -21,13 +21,13 @@ const personTypeDefs = gql`
 		NO
 	}
 
-	type Query {
+	extend type Query {
 		personCount: Int!
 		allPersons(phone: YesNo): [Person!]!
 		findPerson(name: String!): Person
 	}
 
-	type Mutation {
+	extend type Mutation {
 		addPerson(
 			name: String!
 			phone: String

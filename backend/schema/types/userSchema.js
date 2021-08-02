@@ -11,11 +11,11 @@ const userTypeDefs = gql`
 		value: String!
 	}
 
-	type Query {
+	extend type Query {
 		me: User
 	}
 
-	type Mutation {
+	extend type Mutation {
 		createUser(username: String!): User
 		login(username: String!, password: String!): Token
 	}

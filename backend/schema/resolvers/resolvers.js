@@ -1,4 +1,7 @@
 const Person = require('../../models/personModel')
+const jwt = require('jsonwebtoken')
+
+// Older resolver is in the previous exercise
 
 // Resolvers is how GraphQL should respond to these queries (the logic behind the queries)
 // There have to be resolvers for each field in each type of schema
@@ -31,7 +34,7 @@ const Person = require('../../models/personModel')
 
 // GraphQL will automatically parse the _id from MongoDB to just id, no need to manually set _id to id like other exercises
 // Apollo resolvers will now return a RESOLVED promise instead of just an object
-const personResolver = {
+const resolvers = {
 	Query: {
 		personCount: () => Person.collection.countDocuments(),
 		allPersons: (root, args) => {
@@ -41,14 +44,6 @@ const personResolver = {
 
 			// $exists: true will return the documents which contain a phone field, set to false is opposite
 			return Person.find({ phone: { $exists: args.phone === 'YES' } })
-
-			// // YES: only returns person object if it has a phone prop
-			// // NO: returns person without phone prop
-			// const personsWithPhone = (person) => {
-			// 	return args.phone === 'YES' ? person.phone : !person.phone
-			// }
-
-			// return persons.filter(personsWithPhone)
 		},
 		findPerson: (root, args) => Person.findOne({ name: args.name }),
 	},
@@ -102,7 +97,34 @@ const personResolver = {
 			person.phone = args.phone
 			return person.save()
 		},
+
+		createUser: (root, args) => {
+			const user = new User({ username: args.username })
+
+			try {
+				return user.save()
+			} catch (error) {
+				throw new UserInputError(error.message, {
+					invalidArgs: args,
+				})
+			}
+		},
+
+		login: async (root, args) => {
+			const user = await User.findOne({ username: args.username })
+
+			if (!user || args.password !== 'secret') {
+				throw new UserInputError('wrong credentials')
+			}
+
+			const userData = {
+				username: user.username,
+				id: user._id,
+			}
+
+			return { value: jwt.sign(userData, JWT_SECRET) }
+		},
 	},
 }
 
-module.exports = personResolver
+module.exports = resolvers
