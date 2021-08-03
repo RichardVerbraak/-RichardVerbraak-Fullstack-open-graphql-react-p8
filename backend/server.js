@@ -9,7 +9,13 @@ const resolvers = require('./schema/resolvers/resolvers')
 // MongoDB
 const connectDB = require('./config/db')
 const Person = require('./models/personModel')
+const User = require('./models/userModel')
+
+// Seeder data
 const persons = require('./personsData')
+
+// Token (JWT)
+const jwt = require('jsonwebtoken')
 
 // Enable access to .env variables
 require('dotenv').config()
@@ -57,7 +63,7 @@ const apolloServer = async () => {
 			const auth = req ? req.headers.authorization : null
 
 			// Checks for token
-			if (auth && auth.split(' ')[0] === 'bearer') {
+			if (auth && auth.split(' ')[0].toLowerCase() === 'bearer') {
 				// Verify token
 				const decodedToken = jwt.verify(
 					auth.split(' ')[1],
