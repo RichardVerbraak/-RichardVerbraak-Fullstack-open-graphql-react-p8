@@ -1,5 +1,6 @@
 const { gql } = require('apollo-server')
 
+// the 'me' query gives the logged in user info
 const userTypeDefs = gql`
 	type User {
 		id: ID!
@@ -8,7 +9,7 @@ const userTypeDefs = gql`
 	}
 
 	type Token {
-		value: String!
+		token: String!
 	}
 
 	extend type Query {

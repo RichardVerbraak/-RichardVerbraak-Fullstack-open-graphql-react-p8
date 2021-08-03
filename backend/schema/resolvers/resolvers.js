@@ -109,7 +109,10 @@ const resolvers = {
 				id: user._id,
 			}
 
-			return { value: jwt.sign(userData, JWT_SECRET) }
+			const token = jwt.sign(userData, process.env.JWT_SECRET)
+
+			// Send back the token value (as object to adhere to the Token type we defined in the graphql schema)
+			return { token }
 		},
 	},
 }
