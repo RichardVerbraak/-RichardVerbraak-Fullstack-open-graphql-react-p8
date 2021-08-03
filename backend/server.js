@@ -46,10 +46,32 @@ const baseTypeDefs = gql`
 `
 
 // Set up Apollo Server and listen
+// typeDefs: What the data should look like (schemas)
+// resolvers: How said data should be returned (logic)
+// context: context shared by the multiple resolvers like in this case, the logged in user
 const apolloServer = async () => {
 	const server = new ApolloServer({
 		typeDefs: [baseTypeDefs, personTypeDefs, userTypeDefs],
 		resolvers,
+		context: async ({ req }) => {
+			const auth = req ? req.headers.authorization : null
+
+			// Checks for token
+			if (auth && auth.split(' ')[0] === 'bearer') {
+				// Verify token
+				const decodedToken = jwt.verify(
+					auth.split(' ')[1],
+					process.env.JWT_SECRET
+				)
+
+				// Find user and populate the friends field
+				const loggedInUser = await User.findById(decodedToken.id).populate(
+					'friends'
+				)
+
+				return { loggedInUser }
+			}
+		},
 	})
 
 	const { url } = await server.listen()

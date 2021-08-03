@@ -48,6 +48,7 @@ const resolvers = {
 			return Person.find({ phone: { $exists: args.phone === 'YES' } })
 		},
 		findPerson: (root, args) => Person.findOne({ name: args.name }),
+		me: (root, args, context) => context.loggedInUser,
 	},
 	Person: {
 		address: (root) => {
