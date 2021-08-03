@@ -1,4 +1,6 @@
 const Person = require('../../models/personModel')
+const User = require('../../models/userModel')
+const { UserInputError } = require('apollo-server')
 const jwt = require('jsonwebtoken')
 
 // Older resolver is in the previous exercise
@@ -56,53 +58,38 @@ const resolvers = {
 		},
 	},
 	Mutation: {
-		addPerson: (root, args) => {
-			// const samePerson = persons.find((person) => {
-			// 	return person.name === args.name
-			// })
-
-			// if (samePerson) {
-			// 	throw new UserInputError('Name must be unique', {
-			// 		invalidArgs: args.name,
-			// 	})
-			// }
-
-			// const id = uuidv1()
-			// const person = { ...args, id }
-			// persons = persons.concat(person)
-			// return person
-
+		addPerson: async (root, args) => {
 			const person = new Person({ ...args })
-			return person.save()
+
+			try {
+				await person.save()
+				return person
+			} catch (error) {
+				throw new UserInputError(error.message, {
+					invalidArgs: args,
+				})
+			}
 		},
 		editNumber: async (root, args) => {
-			// const person = persons.find((person) => {
-			// 	return person.name === args.name
-			// })
-
-			// if (!person) {
-			// 	return null
-			// }
-
-			// const updatedPerson = { ...person, phone: args.phone }
-
-			// // Update the persons array on the server
-			// persons.map((person) => {
-			// 	return person.name === args.name ? updatedPerson : person
-			// })
-
-			// return updatedPerson
-
 			const person = await Person.findOne({ name: args.name })
 			person.phone = args.phone
-			return person.save()
+
+			try {
+				await person.save()
+				return person
+			} catch (error) {
+				throw new UserInputError(error.message, {
+					invalidArgs: args,
+				})
+			}
 		},
 
-		createUser: (root, args) => {
+		createUser: async (root, args) => {
 			const user = new User({ username: args.username })
 
 			try {
-				return user.save()
+				await user.save()
+				return user
 			} catch (error) {
 				throw new UserInputError(error.message, {
 					invalidArgs: args,
