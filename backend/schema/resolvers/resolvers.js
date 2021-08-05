@@ -83,23 +83,19 @@ const resolvers = {
 			}
 		},
 		addAsFriend: async (root, args, { loggedInUser }) => {
+			// Check if logged in
 			if (!loggedInUser) {
 				throw new AuthenticationError('Authentication failed')
 			}
 
-			console.log(loggedInUser)
-
+			// Find if the user exists in the DB
 			const person = await Person.findOne({ name: args.name })
-			console.log(person)
 
-			const existingFriend = loggedInUser.friends.map((friend) => {
-				console.log(friend)
-				return friend._id === person._id
-			})
+			// Check if the user is a friend already
+			const existingFriend = loggedInUser.friends.includes(person._id)
 
-			console.log(existingFriend)
-
-			if (existingFriend) {
+			// Add if he isn't a friend
+			if (!existingFriend) {
 				loggedInUser.friends = [...loggedInUser.friends, person]
 			}
 
