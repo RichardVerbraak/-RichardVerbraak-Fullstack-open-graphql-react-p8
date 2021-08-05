@@ -82,6 +82,30 @@ const resolvers = {
 				})
 			}
 		},
+		addAsFriend: async (root, args, { loggedInUser }) => {
+			if (!loggedInUser) {
+				throw new AuthenticationError('Authentication failed')
+			}
+
+			console.log(loggedInUser)
+
+			const person = await Person.findOne({ name: args.name })
+			console.log(person)
+
+			const existingFriend = loggedInUser.friends.map((friend) => {
+				console.log(friend)
+				return friend._id === person._id
+			})
+
+			console.log(existingFriend)
+
+			if (existingFriend) {
+				loggedInUser.friends = [...loggedInUser.friends, person]
+			}
+
+			await loggedInUser.save()
+			return loggedInUser
+		},
 		editNumber: async (root, args) => {
 			const person = await Person.findOne({ name: args.name })
 			person.phone = args.phone

@@ -2,8 +2,7 @@
 const { ApolloServer, gql } = require('apollo-server')
 
 // GraphQL
-const personTypeDefs = require('./schema/types/personSchema')
-const userTypeDefs = require('./schema/types/userSchema')
+const typeDefs = require('./schema/types/typeDefs')
 const resolvers = require('./schema/resolvers/resolvers')
 
 // MongoDB
@@ -44,7 +43,7 @@ if (process.argv[2] === 'delete') {
 	deleteData()
 }
 
-// Extending on these baseTypes so the person and user defs can be merged
+// Extending on these baseTypes so the person and user defs can be merged (didnt work with context somehow)
 // source: https://stackoverflow.com/questions/60747549/how-to-split-type-definitions-and-resolvers-into-separate-files-in-apollo-server
 const baseTypeDefs = gql`
 	type Query
@@ -58,14 +57,16 @@ const baseTypeDefs = gql`
 // source on authorization in GraphQL: https://www.apollographql.com/blog/backend/auth/authorization-in-graphql/?_ga=2.45656161.474875091.1550613879-1581139173.1549828167
 const apolloServer = async () => {
 	const server = new ApolloServer({
-		typeDefs: [baseTypeDefs, personTypeDefs, userTypeDefs],
+		typeDefs: typeDefs,
 		resolvers,
 		context: async ({ req }) => {
 			// Check for Authorization header
 			const auth = req ? req.headers.authorization : null
 
+			const bearer = auth.split(' ')[0].toLowerCase()
+
 			// Checks for token
-			if (auth && auth.split(' ')[0].toLowerCase() === 'bearer') {
+			if (auth && bearer) {
 				// Verify token
 				const decodedToken = jwt.verify(
 					auth.split(' ')[1],
