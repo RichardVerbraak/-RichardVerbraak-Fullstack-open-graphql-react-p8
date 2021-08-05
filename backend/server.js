@@ -55,11 +55,13 @@ const baseTypeDefs = gql`
 // typeDefs: What the data should look like (schemas)
 // resolvers: How said data should be returned (logic)
 // context: context shared by the multiple resolvers like in this case, the logged in user
+// source on authorization in GraphQL: https://www.apollographql.com/blog/backend/auth/authorization-in-graphql/?_ga=2.45656161.474875091.1550613879-1581139173.1549828167
 const apolloServer = async () => {
 	const server = new ApolloServer({
 		typeDefs: [baseTypeDefs, personTypeDefs, userTypeDefs],
 		resolvers,
 		context: async ({ req }) => {
+			// Check for Authorization header
 			const auth = req ? req.headers.authorization : null
 
 			// Checks for token

@@ -1,6 +1,6 @@
 const Person = require('../../models/personModel')
 const User = require('../../models/userModel')
-const { UserInputError } = require('apollo-server')
+const { UserInputError, AuthenticationError } = require('apollo-server')
 const jwt = require('jsonwebtoken')
 
 // Older resolver is in the previous exercise
@@ -59,11 +59,22 @@ const resolvers = {
 		},
 	},
 	Mutation: {
-		addPerson: async (root, args) => {
+		addPerson: async (root, args, context) => {
 			const person = new Person({ ...args })
+			const loggedInUser = context.loggedInUser
+
+			if (!loggedInUser) {
+				throw new AuthenticationError('Authentication failed')
+			}
 
 			try {
+				// Add person to the DB (now done with async/await because if this is succesful he will also be added to the friends list)
 				await person.save()
+
+				// Add person to the logged in user's friends list
+				loggedInUser.friends = [...loggedInUser.friends, person]
+				await loggedInUser.save()
+
 				return person
 			} catch (error) {
 				throw new UserInputError(error.message, {
