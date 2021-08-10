@@ -63,7 +63,7 @@ const apolloServer = async () => {
 			// Check for Authorization header
 			const auth = req ? req.headers.authorization : null
 
-			const bearer = auth.split(' ')[0].toLowerCase()
+			const bearer = auth && auth.split(' ')[0].toLowerCase()
 
 			// Checks for token
 			if (auth && bearer) {

@@ -6,10 +6,12 @@ import Persons from './components/Persons'
 import CreatePersonForm from './components/CreatePersonForm'
 import Message from './components/Message'
 import PhoneForm from './components/PhoneForm'
+import LoginForm from './components/LoginForm'
 
 // Could add option to poll(re-fetch) every 2 seconds so the state would update after adding users, con is pointless web traffic
 const App = () => {
 	const [message, setMessage] = useState(null)
+	const [token, setToken] = useState(null)
 
 	const { loading, data } = useQuery(ALL_PERSONS)
 
@@ -22,11 +24,17 @@ const App = () => {
 
 	return (
 		<div>
-			{message && <Message message={message} />}
-			{loading && <h3>Loading...</h3>}
-			{data && <Persons persons={data.allPersons} />}
-			<CreatePersonForm setError={setError} />
-			<PhoneForm setError={setError} />
+			{!token ? (
+				<LoginForm setMessage={setMessage} setToken={setToken} />
+			) : (
+				<div>
+					{message && <Message message={message} />}
+					{loading && <h3>Loading...</h3>}
+					{data && <Persons persons={data.allPersons} />}
+					<CreatePersonForm setError={setError} />
+					<PhoneForm setError={setError} />
+				</div>
+			)}
 		</div>
 	)
 }
