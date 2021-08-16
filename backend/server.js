@@ -57,7 +57,7 @@ const baseTypeDefs = gql`
 // source on authorization in GraphQL: https://www.apollographql.com/blog/backend/auth/authorization-in-graphql/?_ga=2.45656161.474875091.1550613879-1581139173.1549828167
 const apolloServer = async () => {
 	const server = new ApolloServer({
-		typeDefs: typeDefs,
+		typeDefs,
 		resolvers,
 		context: async ({ req }) => {
 			// Check for Authorization header
@@ -65,8 +65,8 @@ const apolloServer = async () => {
 
 			const bearer = auth && auth.split(' ')[0].toLowerCase()
 
-			// Checks for token
-			if (auth && bearer) {
+			// For some reason the authorization header has 'null' (string) instead of just null, can't find anything about it
+			if (auth !== 'null' && bearer) {
 				// Verify token
 				const decodedToken = jwt.verify(
 					auth.split(' ')[1],

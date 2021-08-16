@@ -11,8 +11,6 @@ import {
 	ApolloProvider,
 } from '@apollo/client'
 
-const httpLink = new HttpLink({ uri: 'http://localhost:4000' })
-
 // Adds the authorization header(s) to the ApolloClient with the token value with every GQL request
 const authLink = setContext((_, { headers }) => {
 	// Get token from storage
@@ -27,10 +25,13 @@ const authLink = setContext((_, { headers }) => {
 	}
 })
 
+const httpLink = new HttpLink({ uri: 'http://localhost:4000' })
+
 // Concatenate the headers so httpLink can read/use them
+// Spread out both objects into one single objects (not this > {...authLInk, httpLink})
 const client = new ApolloClient({
 	cache: new InMemoryCache(),
-	link: { ...authLink, httpLink },
+	link: { ...authLink, ...httpLink },
 })
 
 // #### How to 'subscribe' to the client for responses
