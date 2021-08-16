@@ -19,7 +19,11 @@ const CreatePersonForm = ({ setError }) => {
 	const submitHandler = (e) => {
 		e.preventDefault()
 
-		createPerson({ variables: { name, phone, street, city } })
+		// Phone set to null instead of empty string
+		// Else you would get a validation error of phone not meeting the required 5 minLength
+		createPerson({
+			variables: { name, phone: phone.length > 0 ? phone : null, street, city },
+		})
 
 		setName('')
 		setPhone('')
