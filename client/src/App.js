@@ -26,6 +26,8 @@ const App = () => {
 	const logout = () => {
 		setToken(null)
 		localStorage.clear()
+
+		// Removes the cached token from apollo client (apollo caches the results)
 		client.resetStore()
 	}
 
