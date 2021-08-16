@@ -8,13 +8,14 @@ const LoginForm = ({ setMessage, setToken }) => {
 
 	const [login, result] = useMutation(LOGIN, {
 		onError: (error) => {
+			console.log(error)
 			setMessage(error.graphQLErrors[0].message)
 		},
 	})
 
 	useEffect(() => {
 		if (result.data) {
-			const token = result.data.login.value
+			const token = result.data.login.token
 			setToken(token)
 			localStorage.setItem('phonenumbers-user-token', token)
 		}
