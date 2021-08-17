@@ -8,11 +8,30 @@ const CreatePersonForm = ({ setError }) => {
 	const [street, setStreet] = useState('')
 	const [city, setCity] = useState('')
 
+	// Previous solution before update was added
 	// Con of re-fetching on mutation is the server not being updated when other users are altering the state
+	// refetchQueries: [{ query: ALL_PERSONS }]
+
+	// NOTE: read and write query are used for directly interacting with the cache aka previously fetched results NOT the GraphQL server
 	const [createPerson] = useMutation(CREATE_PERSON, {
-		refetchQueries: [{ query: ALL_PERSONS }],
 		onError: (error) => {
 			setError(error.graphQLErrors[0].message)
+		},
+		update: (store, response) => {
+			// Read the cached state of the ALL_PERSONS query
+			const storedData = store.readQuery({ query: ALL_PERSONS })
+
+			// Add the new person (after the createPerson mutation) directly into the cache
+			// 1. Make ALL_PERSONS query to cache NOT server
+			// 2. Set the cache data to what was already stored
+			// 3. Overwrite allPersons to have the newly created person (addPerson is the query name in the schema)
+			store.writeQuery({
+				query: ALL_PERSONS,
+				data: {
+					...storedData,
+					allPersons: [...storedData.allPersons, response.data.addPerson],
+				},
+			})
 		},
 	})
 
