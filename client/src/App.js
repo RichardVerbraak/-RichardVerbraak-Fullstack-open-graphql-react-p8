@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { useApolloClient, useQuery } from '@apollo/client'
-import { ALL_PERSONS } from './queries'
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
+import { ALL_PERSONS, PERSON_ADDED } from './queries'
 
 import Persons from './components/Persons'
 import CreatePersonForm from './components/CreatePersonForm'
@@ -13,6 +13,13 @@ const App = () => {
 	const [message, setMessage] = useState(null)
 	const [token, setToken] = useState(null)
 	const client = useApolloClient()
+
+	// No matter where a new person is added, it will not log to the console thanks to setting up this subscription
+	useSubscription(PERSON_ADDED, {
+		onSubscriptionData: ({ subscriptionData }) => {
+			console.log(subscriptionData)
+		},
+	})
 
 	const { loading, data } = useQuery(ALL_PERSONS)
 
