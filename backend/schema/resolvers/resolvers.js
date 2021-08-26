@@ -166,13 +166,12 @@ const resolvers = {
 			// Send back the token value (as object to adhere to the Token type we defined in the graphql schema)
 			return { token }
 		},
-
-		// This registers the personAdded subscription by returning what's called an iterator object
-		// https://www.apollographql.com/docs/graphql-subscriptions/subscriptions-to-schema/
-		Subscription: {
-			personAdded: {
-				subscribe: () => pubsub.asyncIterator(['PERSON_ADDED']),
-			},
+	},
+	// This registers the personAdded subscription by returning what's called an iterator object
+	// https://www.apollographql.com/docs/graphql-subscriptions/subscriptions-to-schema/
+	Subscription: {
+		personAdded: {
+			subscribe: () => pubsub.asyncIterator(['PERSON_ADDED']),
 		},
 	},
 }
