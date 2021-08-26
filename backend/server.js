@@ -63,9 +63,10 @@ const apolloServer = async () => {
 			// Check for Authorization header
 			const auth = req ? req.headers.authorization : null
 
+			// Split the string bearer from the token
 			const bearer = auth && auth.split(' ')[0].toLowerCase()
 
-			// For some reason the authorization header has 'null' (string) instead of just null, can't find anything about it
+			// For some reason the authorization header is sent as 'null' (string) instead of just null, can't find anything about it
 			if (auth !== 'null' && bearer) {
 				// Verify token
 				const decodedToken = jwt.verify(
