@@ -1,5 +1,19 @@
 import { gql } from '@apollo/client'
 
+// A fragment is used whenever you make a lot of queries requesting the same thing
+// In this case returning everything from a Person (id name phone etc)
+const PERSON_DETAILS = gql`
+	fragment PersonDetails on Person {
+		id
+		name
+		phone
+		address {
+			street
+			city
+		}
+	}
+`
+
 const ALL_PERSONS = gql`
 	query {
 		allPersons {
@@ -65,4 +79,21 @@ const LOGIN = gql`
 	}
 `
 
-export { ALL_PERSONS, FIND_PERSON, CREATE_PERSON, EDIT_NUMBER, LOGIN }
+const PERSON_ADDED = gql`
+	subscription {
+		personAdded {
+			...PersonDetails
+		}
+	}
+
+	${PERSON_DETAILS}
+`
+
+export {
+	ALL_PERSONS,
+	FIND_PERSON,
+	CREATE_PERSON,
+	EDIT_NUMBER,
+	LOGIN,
+	PERSON_ADDED,
+}

@@ -40,6 +40,7 @@ const wsLink = new WebSocketLink({
 	},
 })
 
+// Setting up both HTTP connection and WebSocket connection to GraphQL server
 const splitLink = split(
 	({ query }) => {
 		const definition = getMainDefinition(query)
