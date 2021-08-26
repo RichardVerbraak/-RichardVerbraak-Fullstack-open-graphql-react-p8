@@ -14,10 +14,36 @@ const App = () => {
 	const [token, setToken] = useState(null)
 	const client = useApolloClient()
 
+	// Function that can be reused instead of writing the same thing in every update function in mutations
+	const updateCache = (addedPerson) => {
+		// Checks if user already exists in the cache
+		// Object being the newly added person (in this case)
+		const includedIn = (personsInStore, object) => {
+			personsInStore.map((person) => {
+				return person.id.includes(object.id)
+			})
+		}
+
+		// Send query to store for all persons
+		const storedData = client.readQuery({ query: ALL_PERSONS })
+
+		// If the person does not exist, send all persons query to cache and concat the newly added person
+		if (!includedIn(storedData.allPersons, addedPerson)) {
+			client.writeQuery({
+				query: ALL_PERSONS,
+				data: {
+					allPersons: [...storedData.allPersons, addedPerson],
+				},
+			})
+		}
+	}
+
 	// No matter where a new person is added, it will not log to the console thanks to setting up this subscription
 	useSubscription(PERSON_ADDED, {
 		onSubscriptionData: ({ subscriptionData }) => {
-			console.log(subscriptionData)
+			const addedPerson = subscriptionData.data.personAdded
+			message(`${addedPerson.name} added`)
+			updateCache(addedPerson)
 		},
 	})
 
@@ -47,7 +73,7 @@ const App = () => {
 					{message && <Message message={message} />}
 					{loading && <h3>Loading...</h3>}
 					{data && <Persons persons={data.allPersons} />}
-					<CreatePersonForm setError={setError} />
+					<CreatePersonForm updateCache={updateCache} setError={setError} />
 					<PhoneForm setError={setError} />
 					<button onClick={logout}>Logout</button>
 				</div>

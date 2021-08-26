@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { ALL_PERSONS, CREATE_PERSON } from '../queries'
 
-const CreatePersonForm = ({ setError }) => {
+const CreatePersonForm = ({ setError, updateCache }) => {
 	const [name, setName] = useState('')
 	const [phone, setPhone] = useState('')
 	const [street, setStreet] = useState('')
@@ -20,20 +20,9 @@ const CreatePersonForm = ({ setError }) => {
 		update: (store, response) => {
 			// If there isnt sufficient enough data to make the query in readQuery it will throw an error, hence the try/catch
 			try {
-				// Read the cached state of the ALL_PERSONS query
-				const storedData = store.readQuery({ query: ALL_PERSONS })
-
-				// Add the new person (after the createPerson mutation) directly into the cache
-				// 1. Make ALL_PERSONS query to cache NOT server
-				// 2. Set the cache data to what was already stored
-				// 3. Overwrite allPersons to have the newly created person (addPerson is the query name in the schema)
-				store.writeQuery({
-					query: ALL_PERSONS,
-					data: {
-						...storedData,
-						allPersons: [...storedData.allPersons, response.data.addPerson],
-					},
-				})
+				// The response is the data from a succesful mutation
+				const addedPerson = response.data.person
+				updateCache(addedPerson)
 			} catch (error) {
 				console.log(error)
 			}
