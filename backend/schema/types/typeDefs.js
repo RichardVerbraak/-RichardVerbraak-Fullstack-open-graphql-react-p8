@@ -39,6 +39,10 @@ const typeDefs = gql`
 		addAsFriend(name: String!): User
 	}
 
+	type Subscription {
+		personAdded: Person!
+	}
+
 	type User {
 		id: ID!
 		username: String!
