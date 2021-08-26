@@ -84,8 +84,9 @@ const apolloServer = async () => {
 		},
 	})
 
-	const { url } = await server.listen()
+	const { url, subscriptionsUrl } = await server.listen()
 	console.log(`Server ready at ${url}`)
+	console.log(`Server listening for subscriptions at ${subscriptionsUrl}`)
 }
 
 // Initialize server

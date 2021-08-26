@@ -92,6 +92,7 @@ const resolvers = {
 				await loggedInUser.save()
 
 				// This will send a notification to the browser aka subscriber about a server change
+				// Sort of like setting up a Redux action but I might be completely misinterpreting it
 				pubsub.publish('PERSON_ADDED', { personAdded: person })
 
 				return person
