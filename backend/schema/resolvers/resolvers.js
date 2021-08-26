@@ -1,7 +1,13 @@
 const Person = require('../../models/personModel')
 const User = require('../../models/userModel')
+
+const { PubSub } = require('graphql-subscriptions')
+
 const { UserInputError, AuthenticationError } = require('apollo-server')
+
 const jwt = require('jsonwebtoken')
+
+const pubsub = new PubSub()
 
 // Older resolver is in the previous exercise
 
@@ -33,6 +39,16 @@ const jwt = require('jsonwebtoken')
 // 		name
 // 	}
 // }
+
+///// Subscription type
+// Subscription reverses the 'flow of data' as in, the client now reacts to the server changes instead of the usual other way around
+// The client will listen (subscribe) to changes made on the server, when a change occurs the server sends a notification to all of its subscribers
+// The HTTP-protocol is not well suited for this interaction in a technical sense, so Apollo uses WebSockets for this type of communication (subscribing)
+
+// When to use Subscriptions? https://www.apollographql.com/docs/react/data/subscriptions/
+// Small changes to large objects, requesting a big object each time a small change has been made is expensive
+// So intead you can fetch the large object's initial state and then the server would proactively send updates to the smaller fields of said object
+// The other reason would be to have low-latency between browser and server, for example a chat message you'd want to read instantly
 
 // GraphQL will automatically parse the _id from MongoDB to just id, no need to manually set _id to id like other exercises
 // Apollo resolvers will now return a RESOLVED promise instead of just an object
@@ -74,6 +90,9 @@ const resolvers = {
 				// Add person to the logged in user's friends list
 				loggedInUser.friends = [...loggedInUser.friends, person]
 				await loggedInUser.save()
+
+				// This will send a notification to the browser aka subscriber about a server change
+				pubsub.publish('PERSON_ADDED', { personAdded: person })
 
 				return person
 			} catch (error) {
@@ -145,6 +164,14 @@ const resolvers = {
 
 			// Send back the token value (as object to adhere to the Token type we defined in the graphql schema)
 			return { token }
+		},
+
+		// This registers the personAdded subscription by returning what's called an iterator object
+		// https://www.apollographql.com/docs/graphql-subscriptions/subscriptions-to-schema/
+		Subscription: {
+			personAdded: {
+				subscribe: () => pubsub.asyncIterator(['PERSON_ADDED']),
+			},
 		},
 	},
 }
