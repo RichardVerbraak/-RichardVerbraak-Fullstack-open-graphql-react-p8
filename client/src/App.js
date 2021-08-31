@@ -18,17 +18,21 @@ const App = () => {
 	const updateCache = (addedPerson) => {
 		// Checks if user already exists in the cache
 		// Object being the newly added person (in this case)
-		const includedIn = (personsInStore, object) => {
-			personsInStore.map((person) => {
-				return person.id.includes(object.id)
-			})
-		}
+		// const includedIn = (personsInStore, object) => {
+		// 	personsInStore.map((person) => {
+		// 		return person.id.includes(object.id)
+		// 	})
+		// }
 
 		// Send query to store for all persons
 		const storedData = client.readQuery({ query: ALL_PERSONS })
 
+		const existingPerson = storedData.allPersons.map((person) => {
+			return person.id.includes(addedPerson.id)
+		})
+
 		// If the person does not exist, send all persons query to cache and concat the newly added person
-		if (!includedIn(storedData.allPersons, addedPerson)) {
+		if (!existingPerson) {
 			client.writeQuery({
 				query: ALL_PERSONS,
 				data: {
@@ -42,7 +46,7 @@ const App = () => {
 	useSubscription(PERSON_ADDED, {
 		onSubscriptionData: ({ subscriptionData }) => {
 			const addedPerson = subscriptionData.data.personAdded
-			message(`${addedPerson.name} added`)
+			setMessage(`${addedPerson.name} added`)
 			updateCache(addedPerson)
 		},
 	})
