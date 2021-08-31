@@ -74,6 +74,16 @@ const resolvers = {
 			}
 		},
 		friendOf: async (root) => {
+			// N+1 problem -- fetching data from the DB => looping over data => for each loop, calling the DB again
+			// As this currently stands, this would be an N+1 problem when querying for allPersons
+			// allPersons would fetch the persons and then for each person the friendOf query will be called and thus having multiple DB calls
+
+			// Easiest solution would be to have a friendsOf field in the Mongo Person Schema and populate that field for the allPersons query
+			// friendsOf: {type: mongoose.schema.Types.ObjectId, ref: 'User'}
+			// Person.find({}).populate('friendsOf')
+
+			// The course suggests using a 'join query' or using the DataLoader library to fix N+1 problems
+
 			// Check if said person is a friend of some of the users (users being the ones that have an 'account')
 			// Find gets all the users friends object and checks to see if the Persons ID is included
 			const friends = await User.find({
