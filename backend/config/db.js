@@ -9,6 +9,8 @@ const connectDB = async () => {
 			useFindAndModify: true,
 		})
 
+		mongoose.set('debug', true)
+
 		console.log(`MongoDB connected to ${connect.connection.host}`)
 	} catch (error) {
 		console.error(`Error: ${error.message}`)

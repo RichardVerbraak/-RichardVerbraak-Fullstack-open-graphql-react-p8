@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { ALL_PERSONS, CREATE_PERSON } from '../queries'
+import { CREATE_PERSON } from '../queries'
 
 const CreatePersonForm = ({ setError, updateCache }) => {
 	const [name, setName] = useState('')

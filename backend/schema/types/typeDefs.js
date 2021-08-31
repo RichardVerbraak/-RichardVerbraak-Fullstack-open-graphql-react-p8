@@ -10,7 +10,18 @@ const typeDefs = gql`
 		name: String!
 		phone: String
 		address: Address!
+		friendOf: [User!]!
 		id: ID!
+	}
+
+	type User {
+		id: ID!
+		username: String!
+		friends: [Person!]!
+	}
+
+	type Token {
+		token: String!
 	}
 
 	enum YesNo {
@@ -41,16 +52,6 @@ const typeDefs = gql`
 
 	type Subscription {
 		personAdded: Person!
-	}
-
-	type User {
-		id: ID!
-		username: String!
-		friends: [Person!]!
-	}
-
-	type Token {
-		token: String!
 	}
 `
 

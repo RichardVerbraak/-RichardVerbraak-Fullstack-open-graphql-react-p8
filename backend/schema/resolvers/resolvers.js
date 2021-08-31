@@ -73,6 +73,15 @@ const resolvers = {
 				city: root.city,
 			}
 		},
+		friendOf: async (root) => {
+			// Check if said person is a friend of some of the users (users being the ones that have an 'account')
+			// Find gets all the users friends object and checks to see if the Persons ID is included
+			const friends = await User.find({
+				friends: { $in: [root.id] },
+			})
+
+			return friends
+		},
 	},
 	Mutation: {
 		addPerson: async (root, args, context) => {
